@@ -1,14 +1,14 @@
-import { searchRepositories } from "@/Lib/github";
-import RepoList from "@/Components/RepoList";
+import { searchRepositories } from "@/lib/github";
+import RepoList from "@/components/RepoList";
 
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { q?: string };
+  searchParams: Promise<{ q?: string }>;
 }) {
-  const query = searchParams.q;
+  const { q } = await searchParams;
 
-  const data = query ? await searchRepositories(query) : null;
+  const data = q ? await searchRepositories(q) : null;
 
   return (
     <main className="p-6 max-w-4xl mx-auto">
@@ -16,12 +16,13 @@ export default async function Home({
         GitHub Repository Explorer
       </h1>
 
-      <form className="mb-6">
+      <form method="GET" className="mb-6">
         <input
+          type="text"
           name="q"
           placeholder="Search repositories..."
+          defaultValue={q}
           className="border p-2 w-full rounded"
-          defaultValue={query}
         />
       </form>
 
