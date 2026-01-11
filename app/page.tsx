@@ -1,5 +1,6 @@
 import { searchRepositories } from "@/lib/github";
 import RepoList from "@/components/RepoList";
+import SearchBar from "@/Components/SearchBar";
 
 export default async function Home({
   searchParams,
@@ -16,15 +17,10 @@ export default async function Home({
         GitHub Repository Explorer
       </h1>
 
-      <form method="GET" className="mb-6">
-        <input
-          type="text"
-          name="q"
-          placeholder="Search repositories..."
-          defaultValue={q}
-          className="border p-2 w-full rounded"
-        />
-      </form>
+       <div className="mb-6">
+        <SearchBar />
+      </div>
+      
 
       {data && <RepoList repos={data.items} />}
     </main>
