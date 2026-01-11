@@ -8,17 +8,17 @@ interface RepoListProps {
 export default function RepoList({ repos }: RepoListProps) {
   if (repos.length === 0) {
     return (
-      <p className="text-gray-500">
+      <p className="text-center text-gray-500 col-span-full">
         No repositories found.
       </p>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <>
       {repos.map((repo) => (
         <RepoCard key={repo.id} repo={repo} />
       ))}
-    </div>
+    </>
   );
 }
