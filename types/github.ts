@@ -5,6 +5,8 @@ export interface GitHubRepo {
   description: string | null;
   stargazers_count: number;
   forks_count: number;
+  html_url: string;
+  default_branch:string;
   open_issues_count: number;
   language: string | null;
   updated_at: string;

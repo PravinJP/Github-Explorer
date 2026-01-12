@@ -53,21 +53,11 @@ export default async function Home({
     <section className="px-6 pb-20">
       <div className="max-w-7xl mx-auto">
 
-        {data ? (
+        {data && (
           <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <RepoList repos={data.items} />
           </div>
-        ) : (
-          <div className="text-center py-24">
-            <div className="text-7xl mb-6">🔍</div>
-            <h3 className="text-3xl font-bold text-gray-800 mb-3">
-              Start searching GitHub
-            </h3>
-            <p className="text-gray-500 text-lg max-w-md mx-auto">
-              Enter a repository name, topic, or keyword above to explore open-source projects.
-            </p>
-          </div>
-        )}
+        ) }
 
       </div>
     </section>
