@@ -1,45 +1,52 @@
-const BASE_URL = "https://api.github.com";
+const GITHUB_API_BASE = "https://api.github.com";
 
-export async function searchRepositories(query: string) {
-  const res = await fetch(
-    `${BASE_URL}/search/repositories?q=${encodeURIComponent(query)}`,
-    {
-      headers: {
-        Accept: "application/vnd.github+json",
-      },
-      cache: "no-store",
+
+async function githubFetch<T>(endpoint: string): Promise<T> {
+  const res = await fetch(`${GITHUB_API_BASE}${endpoint}`, {
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+    },
+    next: { revalidate: 60 },
+  });
+
+  
+  if (res.status === 403) {
+    const remaining = res.headers.get("x-ratelimit-remaining");
+    const reset = res.headers.get("x-ratelimit-reset");
+
+    if (remaining === "0" && reset) {
+      const resetTime = new Date(Number(reset) * 1000);
+      throw new Error(
+        `GitHub API rate limit exceeded. Try again after ${resetTime.toLocaleTimeString()}`
+      );
     }
-  );
+  }
 
+  
   if (!res.ok) {
-    throw new Error("Failed to fetch repositories");
+    throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
   }
 
   return res.json();
 }
 
-export async function getRepository(owner: string, repo: string) {
-  const res = await fetch(
-    `${BASE_URL}/repos/${owner}/${repo}`,
-    { cache: "no-store" }
+
+
+export function searchRepositories(query: string) {
+  return githubFetch(
+    `/search/repositories?q=${encodeURIComponent(query)}`
   );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch repository");
-  }
-
-  return res.json();
 }
 
-export async function getCommits(owner: string, repo: string) {
-  const res = await fetch(
-    `${BASE_URL}/repos/${owner}/${repo}/commits?per_page=5`,
-    { cache: "no-store" }
+export function getRepository(owner: string, repo: string) {
+  return githubFetch(
+    `/repos/${owner}/${repo}`
   );
+}
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch commits");
-  }
-
-  return res.json();
+export function getCommits(owner: string, repo: string) {
+  return githubFetch(
+    `/repos/${owner}/${repo}/commits?per_page=5`
+  );
 }
